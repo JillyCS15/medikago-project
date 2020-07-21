@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import socket
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +27,7 @@ SECRET_KEY = ')y)yc*z!v^hb52a+0or94e9mp44@euzu194lj&d=#n=+$qm2k2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'medikago-project.herokuapp.com']
 
 
 # Application definition
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,14 +75,23 @@ WSGI_APPLICATION = 'medikago.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+DATABASE_URL = 'postgres://xmjxnfixdbnhqm:53f546e394d7e0afd4be5e1790ac0b2d02b5b70fda2ee7d5e9b3332cd54b080e@ec2-54-146-91-153.compute-1.amazonaws.com:5432/d87q5gi15d25hh'
+
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'OPTIONS' : {
+            'options' : '-c search_path=medikago',
+            'sslmode': 'require',
+        },
+        'NAME': 'd87q5gi15d25hh',
+        'USER': 'xmjxnfixdbnhqm',
+        'PASSWORD': '53f546e394d7e0afd4be5e1790ac0b2d02b5b70fda2ee7d5e9b3332cd54b080e',
+        'HOST': 'ec2-54-146-91-153.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -118,3 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Compression and Caching
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
